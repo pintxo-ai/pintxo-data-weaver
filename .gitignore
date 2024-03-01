@@ -1,1 +1,15 @@
 .env
+
+api-service/dist
+api-service/node_modules
+
+
+pintxo-engine-connector/dist
+pintxo-engine-connector/node_modules
+
+
+pyth-service/dist
+pyth-service/node_modules
+
+substreams-service/dist
+substreams-service/node_modules

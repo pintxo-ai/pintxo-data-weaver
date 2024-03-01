@@ -1,0 +1,18 @@
+{
+  "substreamsConfig": [
+    {
+      "name": "ERC-20-Supply",
+      "manifestUrl": "https://github.com/pinax-network/substreams-erc20-supply/releases/download/v0.1.2/erc20-supply-v0.1.2.spkg",
+      "strategy": "SupplyStrategy",
+      "outputModule": "map_token_supply",
+      "interface": "SupplyMetric"
+    },
+    {
+      "name": "Pintxo-Substreams",
+      "manifestUrl": "https://github.com/pintxo-ai/pintxo-substreams/releases/download/v0.1.1/pintxo-stream-v0.1.0.spkg",
+      "strategy": "SeaportStrategy",
+      "outputModule": "metrics_out",
+      "interface": "PintxoMetric"
+    }
+  ]
+}
