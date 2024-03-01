@@ -1,4 +1,9 @@
 [
+    {
+        "endpoint": "https://api.coingecko.com/api/v3/coins/list",
+        "dataType": "tokens",
+        "responseType": "json"
+    },
     { 
         "endpoint": "https://api.llama.fi/protocols", 
         "dataType": "protocols", 
