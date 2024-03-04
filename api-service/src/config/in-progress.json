@@ -1,0 +1,27 @@
+[
+    { 
+        "endpoint": "https://stablecoins.llama.fi/stablecoins?includePrices=true", 
+        "dataType": "stablecoins", 
+        "responseType": "json" 
+    },
+    { 
+        "endpoint": "https://yields.llama.fi/pools", 
+        "dataType": "pools", 
+        "responseType": "json" 
+    },
+    { 
+        "endpoint": "https://api.llama.fi/overview/dexs?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true&dataType=totalVolume", 
+        "dataType": "volumes", 
+        "responseType": "json" 
+    },
+    { 
+        "endpoint": "https://api.llama.fi/overview/fees?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true&dataType=dailyFees", 
+        "dataType": "daily_fees", 
+        "responseType": "json" 
+    },
+    { 
+        "endpoint": "https://api.llama.fi/overview/fees?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true&dataType=dailyRevenue", 
+        "dataType": "daily_revenue", 
+        "responseType": "json" 
+    }
+]

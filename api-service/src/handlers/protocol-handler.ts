@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { DataTypeHandler } from 'src/interfaces/data-type-handler.interface';
-import { ProtocolEntry } from 'src/interfaces/protocol.interface';
+import { ProtocolData } from 'src/interfaces/protocol.interface';
 
 @Injectable()
 export class ProtocolHandler implements DataTypeHandler {
     async fetchData(endpoint: string): Promise<string> {
-        const response = await axios.get<ProtocolEntry[]>(endpoint);
+        const response = await axios.get<ProtocolData[]>(endpoint);
         // only stringify the data part of the response
         return JSON.stringify(response.data);
     }
@@ -14,9 +14,9 @@ export class ProtocolHandler implements DataTypeHandler {
     processData(data: any): any {
         const parsedData = JSON.parse(data);
 
-        const fieldsToRemove = ['logo', 'audits', 'audit_note', 'module', 'audit_links', 'slug', 'governanceID'];
+        const fieldsToRemove = ['logo', 'audits', 'audit_note', 'module', 'audit_links', 'forkedFrom', 'listedAt', 'github', 'treasury', 'oracles', 'slug', 'methodology', 'governanceID', 'tokenBreakdowns'];
 
-        const cleanedData = parsedData.map((entry: ProtocolEntry) => {
+        const cleanedData = parsedData.map((entry: ProtocolData) => {
             fieldsToRemove.forEach(field => {
                 delete entry[field];
             });

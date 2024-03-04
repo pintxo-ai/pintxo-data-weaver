@@ -1,7 +1,0 @@
-[
-    { 
-        "endpoint": "https://api.llama.fi/protocols", 
-        "dataType": "protocols", 
-        "responseType": "json" 
-    }
-]

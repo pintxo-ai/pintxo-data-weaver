@@ -15,12 +15,10 @@ export class ProtocolsProcessor implements DataProcessingProcessor {
                 description: { assign: message.description },
                 chain: { assign: message.chain },
                 gecko_id: { assign: message.gecko_id },
-                cmcId: { assign: message.cmcId || '' }, // needs to be string?
+                cmcId: { assign: message.cmcId || '' }, // needs to be string? handle null vs empty string better
                 category: { assign: message.category },
                 chains: { assign: message.chains },
                 twitter: { assign: message.twitter },
-                github: { assign: message.github },
-                methodology: { assign: message.methodology },
                 tvl: { assign: message.tvl },
                 chainTvls: { assign: message.chainTvls },
                 change_1h: { assign: message.change_1h },
@@ -30,7 +28,7 @@ export class ProtocolsProcessor implements DataProcessingProcessor {
             },
             type: "protocols",
         };
-        console.log('BASED protocols - ', request)
+        //console.log('BASED protocols - ', request)
         return request
     };
 }

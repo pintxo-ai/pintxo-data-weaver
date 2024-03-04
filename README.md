@@ -1,24 +1,128 @@
 # Pintxo-Data-Weaver
-Pintxo Data Weaver <strike>```will be```</strike>is a cutting-edge distributed middleware designed to orchestrate the seamless flow of data from sources (Substreams, Pyth, dedicated API's, etc) to our sink, Pintxo's Engine (a Vespa Vector DB).
+Pintxo Data Weaver <strike>```will be```</strike>is a cutting-edge distributed middleware designed to orchestrate the seamless flow of data from sources (Substreams, Pyth, dedicated API's, etc) to our sink, Pintxo's Engine (a Vespa Vector DB). 
+
+In its current state, the system is composed of four microservices; the substreams service, pyth service, api service, and engine connector service.
 
 ## Setup + Running
-
+---
 ### Pre-reqs
+
+1. Have docker + compose installed. 
 
 ### Instructions
 
-1. ```docker-compose up --build``` 
+1. To run all services defined in the compose, run:
+```docker-compose up --build``` 
+
+2. To run individual services, navigate within their root dir and run:
+```pnpm run build```
+```pnpm run start```
 
 ## Adding Data Sources
+---
+### Substreams Service
+There are three steps involved in adding a substream:
 
-### Substreams
+1. Within the substreams-service folder, navigate to ```src/config/substreams.config.json```. This JSON contains entries for substreams we wish to read from. The entries have the following structure: 
+```
+{
+  "substreamsConfig": [
+    {
+      "name": "Pintxo-Substreams",
+      "manifestUrl": "https://github.com/pintxo-ai/pintxo-substreams/releases/download/v0.1.1/pintxo-stream-v0.1.0.spkg",
+      "strategy": "SeaportStrategy",
+      "outputModule": "metrics_out",
+      "interface": "PintxoMetric"
+    },
+    ...
+  ]
+}
+```
+Where every JSON substream entry has the fields:
+```name``` - Defines the Substream Name 
+```manifestUrl``` - Defines the high-level outline for a Substreams module. The manifest file is used for defining properties specific to the Substreams module and identifying the dependencies between the inputs and outputs of modules.
+```strategy``` - Defines the substream block processesing strategy that will be used to extract and format the information we desire. (Arbitrary name used in the next step.)
+```outputModule``` - Defines the substream module to track within the manifestUrl for events.
+```interface``` - Defines the interface type/structure that will be used for the substream when processing.
 
-### Realtime/Websocket sources?
+This is the first step in adding new substreams to the substreams service.
 
-### API Endpoints (HTTP?)
+2. After defining the configurations for a new substream, a strategy must be defined to processing module output. First, within ```src/substreams/strategy-factory.ts``` write two lines of code adding new case for the strategy defined in step 1, and import this un-implemented strategy. Next implement the strategy; following the general syntax:  
+```export class X implements MessageProcessingStrategy<Y>```, where X is the strategy name you defined, and Y is the respective interface. Define Y within ```src/interfaces/```.
+Implement the substeam block processing in whatever way; however, the response must return an interface composition of ```Input<Y>[]``` where Y is the corresponding interface and the Input interface is 
+``` 
+export interface Input<T> extends Iterable<T>{
+    fields: T;
+    type: string;
+}
+```
+
+3. Now leaving the substreams microservice, we must define a handler + some logic in the engine-connector service. View SUBSTREAM-CONNECTION step below.
+
+### Realtime Service
+Not much done here for architecture abstraction. Only have Pyth hooked up right now, but vision is this would just handle all real-time transport requests.
+Ideally, hook it up in the initiailizer, then define a handler that pipes into a kafka topic. The kafka topic defined must be defined in the Pintxo-engine-connector to receive the messages.
+
+### API Service
+There are 3/4 steps involved in adding a new data source endpoint. 
+
+1. Add API endpoint w/ corresponding dataType and responseType to ```src/config/endpoints.json``` with the following structure:
+```
+[
+    {
+        "endpoint": "https://api.coingecko.com/api/v3/coins/list",
+        "dataType": "tokens",
+        "responseType": "json"
+    },
+    { 
+        "endpoint": "https://api.llama.fi/protocols", 
+        "dataType": "protocols", 
+        "responseType": "json" 
+    },
+    ...
+]
+```
+Where each JSON endpoint entry has the fields:
+```endpoint``` - Defines thes the api endpoint URL.
+```dataType``` - Defines the corresponding Kafka topic name as well as pre-processor handler.
+```responseType``` - Not used right now but useful for defining interfaces.
+
+2. Now within ```src/handlers/```, define a new handler for the endpoint. The general structure for a handler follows:
+```
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
+import { DataTypeHandler } from 'src/interfaces/data-type-handler.interface';
+
+@Injectable()
+export class <X>Handler implements DataTypeHandler {
+    async fetchData(endpoint: string) {
+        const response = await axios.get(endpoint);
+        return response.data;
+    }
+
+    processData(data: any): any {
+        return data;
+    }
+}
+```
+where X corresponds to the endpoints response data type.
+
+3. Once pre-processing handler logic is defined, in ```src/api/api.service.ts```, first import the handler, then within the ```initializeHandlers()``` function, register the handler along with the respective dataType (the one used in the config).
+
+4. Leaving the API service, we must define a handler + some logic in the engine-connector service. View step API-CONNECTION step below.
+
+### Engine Connector Service
+The engine connector is a kafka consumer and orchestrates all topic message consumption, as well as the respective handling + injection into the Pintxo Engine (Vespa DB).
+
+1. 
+
+- SUBSTREAM-CONNECTION
+
+- API-CONNECTION
 
 
 ## Architecture
+---
 We embody a microservice archtecture. [1] To orchestrate this system, we will use the NestJS framework; a TypeScript-based framework built on top of Node.js. 
 
 ### Advatanges & Disadvantages with this approach
@@ -61,6 +165,7 @@ The system addresses the disadvantages—through the use of specific technologie
 5. Deployment and Orchestration: Docker Compose aids in the deployment process by allowing the definition of how services are built, connected, and stored. When more complex orchestration is needed, we will integrate with Kubernetes, which can manage the Docker containers at scale. 
 
 ### Choice of NestJS
+---
 NestJS was chosen for the following reasons:
 
 1. Modular Architecture:
@@ -90,6 +195,7 @@ Lies in its adaptability and alignment with microservices principles:
 
 
 ### Kafka
+----
 Kafka a standout choice for building scalable and distributed systems.
 
 1. Scalability: Kafka is horizontally scalable, which means you can handle massive volumes of data and high traffic loads by simply adding more machines to the cluster. This scalability is crucial when dealing with microservices that demand real-time communication and data synchronization.
@@ -125,6 +231,7 @@ Some key architectural components:
 
 
 ### Options for Scaling
+---
 The two main strategies for scaling microservices involves increasing the capacity and availability of your services to handle growing workloads. 
 
 1. Horizontal Scaling:

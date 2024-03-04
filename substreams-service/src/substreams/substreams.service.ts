@@ -19,13 +19,10 @@ import { StrategyFactory } from './strategy-factory.js';
 import { MessageProcessingStrategy } from './strategies/message-processing-strategy.interface.ts:.js';
 import { PintxoMetric } from 'src/interfaces/pintxo-metric.interface.js';
 
-
-
 @Injectable()
 export class SubstreamsService implements OnModuleInit, OnApplicationBootstrap {
   constructor(@Inject('KAFKA_SUBSTREAMS_SERVICE') private clientKafka: ClientKafka) { }
   
-
   private coin_map = new Map<string, string>();
   private emitter: BlockEmitter;
   // private admin: Admin;
@@ -120,48 +117,27 @@ export class SubstreamsService implements OnModuleInit, OnApplicationBootstrap {
         //console.log('NEW METRIC - ', metric)
         await this.upload_metric(metric, substreamName);
       }
-      // let metrics;
-      // if (message.items) { // Assuming this structure for SupplyStrategy
-      //   metrics = message.items.map(item => this.strategy.processMessage(item));
-      // } else if (message.metrics) { // Assuming this structure for other strategies like SeaportStrategy
-      //   metrics = message.metrics.map(metric => this.strategy.processMessage(metric));
-      // }
-
-      // for (const metric of metrics) {
-      //   await this.upload_metric(metric, substreamName);
-      // }
-      // let metricBlock = Metrics.fromJSON(message);
-      // console.log('METRIC BLOCK ', metricBlock)
-      // //for (const index in metricBlock.metrics) {
-      // for (const metric of metricBlock.metrics) {
-      //   let type = substreamConfig.interface
-      //   console.log('INTERFACE TYPE - ', type)
-      //   const substreamMetric: Input<{type}> = this.strategy.processMessage(metricBlock, metric);
-      //   await this.upload_metric(substreamMetric, substreamName);
-      // }
-      //////////////////////////////////////////////////////////
     });
-    
-
+  
     this.emitter.on("close", (error) => error && console.error("Stream Closed:", error));
     this.emitter.on("fatalError", (error) => console.error("Fatal Error:", error));
     this.emitter.start();
   }
 
   async upload_metric(substreamMetric: Input<any>, substreamName: string): Promise<void> { //FIX ANY
-    //console.log("***SUBSTREAM METRIC***", substreamMetric);
+    console.log("***SUBSTREAM METRIC***", substreamMetric);
     const topic = `${substreamName}-substreams-topic`;
-    console.log('TOPIC - ', topic)
+    //console.log('TOPIC - ', topic)
 
-    //     console.log("*Temp ID***** 1: ", substreamMetric.id);
-    //     // extract parts
-    //     // const idPattern = /([^:]+):volume:hour=(\d+):token=([a-f0-9]+)/;
-    //     // const matches = substreamMetric.id.match(idPattern);
+    //console.log("*Temp ID***** 1: ", substreamMetric.id);
+        // extract parts
+        // const idPattern = /([^:]+):volume:hour=(\d+):token=([a-f0-9]+)/;
+        // const matches = substreamMetric.id.match(idPattern);
 
-    //     // if (!matches) {
-    //     //   console.error('Invalid ID format');
-    //     //   return;
-    //     // }
+        // if (!matches) {
+        //   console.error('Invalid ID format');
+        //   return;
+        // }
 
     // // Assuming the structure of the id is consistent with the given example
     // const [_, protocolName, hour, token] = matches;

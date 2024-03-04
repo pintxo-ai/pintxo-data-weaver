@@ -3,10 +3,12 @@ import { Cron, CronExpression, SchedulerRegistry } from '@nestjs/schedule';
 import { ClientKafka } from '@nestjs/microservices';
 import axios from 'axios';
 import * as fs from 'fs';
-import { DataHandlerFactory } from './data-handler-factory';
-import { EndpointConfig } from './interfaces/endpoint.interface';
-import { CoinListHandler } from './handlers/coin-list-handler';
-import { ProtocolHandler } from './handlers/protocol-handler';
+import { DataHandlerFactory } from '../data-handler-factory';
+import { EndpointConfig } from '../interfaces/endpoint.interface';
+import { CoinListHandler } from '../handlers/coin-list-handler';
+import { ProtocolHandler } from '../handlers/protocol-handler';
+import { ChainHandler } from '../handlers/chain-handler';
+import { BridgeHandler } from '../handlers/bridge-handler';
 
 @Injectable()
 export class ApiService implements OnModuleInit {
@@ -40,21 +42,23 @@ export class ApiService implements OnModuleInit {
     // });
     this.endpoints = await this.loadEndpointsConfig();
     this.initializeHandlers();
-    this.handleCron();
+    //this.handleCron(); // fetch off the bat
   }
 
   private async loadEndpointsConfig(): Promise<EndpointConfig[]> {
-    return JSON.parse(fs.readFileSync('./src/endpoints/endpoints.json', 'utf-8'));
+    return JSON.parse(fs.readFileSync('./src/config/endpoints.json', 'utf-8'));
   }
 
   private initializeHandlers() {
     // register handlers to factory
     this.dataHandlerFactory.registerHandler('tokens', new CoinListHandler());
     this.dataHandlerFactory.registerHandler('protocols', new ProtocolHandler());
+    this.dataHandlerFactory.registerHandler('chains', new ChainHandler());
+    this.dataHandlerFactory.registerHandler('bridges', new BridgeHandler());
   }
 
   // @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT) EVERY_30_SECONDS
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  @Cron(CronExpression.EVERY_10_MINUTES)
   async handleCron() {
     for (const endpointConfig of this.endpoints) {
       console.log('CONFIG - ', endpointConfig)
@@ -65,7 +69,7 @@ export class ApiService implements OnModuleInit {
   async fetchDataAndPublish(config: EndpointConfig) {
     try {
       const handler = this.dataHandlerFactory.getHandler(config.dataType);
-      //console.log(`HANDLER ${handler} for CONFIG ${config}`)
+      console.log(`HANDLER ${handler} for CONFIG ${config}`)
       const data = await handler.fetchData(config.endpoint);
       const processedData = handler.processData(data);
       //this.publishToKafka(processedData, config.dataType);
@@ -79,8 +83,9 @@ export class ApiService implements OnModuleInit {
 
   // publish data to corresponding kafka api 'type' topic
   private publishToKafka(data: any, type: any) {
-    console.log('tip - ', type)
-    this.clientKafka.emit(`${type}-api-topic`, data);
+    const topic = `${type}-api-topic`;
+    console.log(`Publishing to topic - ${topic}`);
+    this.clientKafka.emit(topic, data);
   }
 
   // scheduleJob(config: any) {
