@@ -3,7 +3,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ApiController } from './api.controller';
 import { ApiService } from './api.service';
-import { DataHandlerFactory } from '../data-handler-factory';
+import { DataHandlerFactory } from '../handlers/data-handler-factory';
 
 /**
  * The ApiModule configures NestJS services related to data fetching, publishing, and the Kafka client for communication.

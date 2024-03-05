@@ -7,38 +7,36 @@ import { Input } from '../interfaces/input.interface';
 export class PintxoEngineConnectorController {
   constructor(private readonly pintxoEngineService: PintxoEngineConnectorService) { }
 
-  /// SUBSTREAMS TOPICS 
+  /// SUBSTREAMS TOPIC(S)
   ////////////////////////////////////////////////////////////
-  @EventPattern('pintxo-substreams-topic')
+  @EventPattern('pintxo-seaport-substreams-topic')
   async handleProcessedData(@Payload() message: any) {
     //console.log('Received Kafka message:', message);
-    console.log("Weaving Data from pintxo-substreams-topic...")
+    console.log("Weaving Data from pintxo-seaport-substreams-topic...")
 
     if (message) {
-      await this.pintxoEngineService.processData('pintxo-substreams-topic', message);
+      await this.pintxoEngineService.processData('pintxo-seaport-substreams-topic', message);
     }
 
     return "<***>RECEIVED MESSAGE<***>: " + message
   }
 
-  @EventPattern('ERC-20-Supply-substreams-topic')
+  @EventPattern('erc-20-supply-substreams-topic')
   async handleTokenData(@Payload() message: any) {
-    //console.log('Received Kafka token:', message);
-    console.log("Weaving Data from ERC-20-Supply-substreams-topic...")
+    console.log("Weaving Data from erc-20-supply-substreams-topic...")
 
-    // if (message) {
-    //   await this.pintxoEngineService.processData(message);
-    // }
+    if (message) {
+      await this.pintxoEngineService.processData('erc-20-supply-substreams-topic', message);
+    }
 
     return "<***>RECEIVED MESSAGE<***>: " + message
   }
 
   
-  /// PYTH SERVICE TOPICS
+  /// PYTH SERVICE TOPIC(S)
   ////////////////////////////////////////////////////////////
   @EventPattern('pyth-price-topic') // 
   async handlePythPrices(@Payload() message: any) {
-    //console.log('Received Kafka message from pyth-price-topic:', message);
     console.log("Weaving Data from pyth-price-topic...")
 
     if (message) {
@@ -47,11 +45,10 @@ export class PintxoEngineConnectorController {
   }
 
 
-  /// API SERVICE TOPICS
+  /// API SERVICE TOPIC(S)
   ////////////////////////////////////////////////////////////
   @EventPattern('tokens-api-topic') // 
   async handleTokenListData(@Payload() message: any) {
-    //console.log('Received Kafka message from tokens-api-topic:', message);
     console.log("Weaving Data from tokens-api-topic...")
 
     if (message) {
@@ -61,7 +58,6 @@ export class PintxoEngineConnectorController {
 
   @EventPattern('protocols-api-topic')
   async handleProtocolData(@Payload() message: any) {
-    //console.log('Received Kafka message from protocols-api-topic:', message);
     console.log("Weaving Data from protocols-api-topic...")
 
     if (message) {
@@ -71,7 +67,6 @@ export class PintxoEngineConnectorController {
   
   @EventPattern('chains-api-topic')
   async handleChainData(@Payload() message: any) {
-    //console.log('Received Kafka message from chains-api-topic:', message);
     console.log("Weaving Data from chains-api-topic...")
 
     if (message) {
@@ -81,11 +76,19 @@ export class PintxoEngineConnectorController {
 
   @EventPattern('bridges-api-topic')
   async handleBridgeData(@Payload() message: any) {
-    //console.log('Received Kafka message from bridges-api-topic:', message);
     console.log("Weaving Data from bridges-api-topic...")
 
     if (message) {
       await this.pintxoEngineService.processData('bridges-api-topic', message);
+    }
+  }
+
+  @EventPattern('stablecoins-api-topic')
+  async handleStablecoinData(@Payload() message: any) {
+    console.log("Weaving Data from stablecoins-api-topic...")
+
+    if (message) {
+      await this.pintxoEngineService.processData('stablecoins-api-topic', message);
     }
   }
 }

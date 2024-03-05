@@ -3,9 +3,7 @@ import { Input } from "src/interfaces/input.interface";
 
 export class PythProcessor implements DataProcessingProcessor {
   processData(message: any): Input {
-    //console.log('BASEDin pyth - ', message)
     const requestUrl = `http://vespa:8080/document/v1/pintxo/price/docid/${message.symbol}?create=true`;
-    // await this.pintxoEngineService.uploadData(requestUrl, message, 'pyth');
     const request: Input = {
         reqUrl: requestUrl,
         fields: {

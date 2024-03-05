@@ -39,7 +39,7 @@ export class SeaportStrategy implements MessageProcessingStrategy<PintxoMetric> 
 
     const metrics: Input<PintxoMetric>[] = message.metrics.map((metricItem: any) => {
       const metric: PintxoMetric = {
-        id: "Opensea Seaport:" + trimPrefix(metricItem.key),
+        id: "Opensea_Seaport:" + trimPrefix(metricItem.key),
         value: metricItem.value,
       };
 

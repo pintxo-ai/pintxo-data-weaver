@@ -1,3 +1,6 @@
+/**
+ * @description Represents the data structure for a single protocol.
+ */
 export interface ProtocolData {
     id: string;
     name: string;

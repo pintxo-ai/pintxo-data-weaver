@@ -22,7 +22,7 @@ import { PintxoMetric } from 'src/interfaces/pintxo-metric.interface.js';
 @Injectable()
 export class SubstreamsService implements OnModuleInit, OnApplicationBootstrap {
   constructor(@Inject('KAFKA_SUBSTREAMS_SERVICE') private clientKafka: ClientKafka) { }
-  
+
   private coin_map = new Map<string, string>();
   private emitter: BlockEmitter;
   // private admin: Admin;
@@ -109,16 +109,16 @@ export class SubstreamsService implements OnModuleInit, OnApplicationBootstrap {
 
     this.emitter.on('anyMessage', async (message) => {
       // stategy handles message format and parsing
-      const strategy = StrategyFactory.getStrategy(substreamConfig.strategy); 
+      const strategy = StrategyFactory.getStrategy(substreamConfig.strategy);
       const processedMetrics = strategy.processMessage(message);
-      
+
       // upload each metric
       for (const metric of processedMetrics) {
         //console.log('NEW METRIC - ', metric)
         await this.upload_metric(metric, substreamName);
       }
     });
-  
+
     this.emitter.on("close", (error) => error && console.error("Stream Closed:", error));
     this.emitter.on("fatalError", (error) => console.error("Fatal Error:", error));
     this.emitter.start();
@@ -130,14 +130,14 @@ export class SubstreamsService implements OnModuleInit, OnApplicationBootstrap {
     //console.log('TOPIC - ', topic)
 
     //console.log("*Temp ID***** 1: ", substreamMetric.id);
-        // extract parts
-        // const idPattern = /([^:]+):volume:hour=(\d+):token=([a-f0-9]+)/;
-        // const matches = substreamMetric.id.match(idPattern);
+    // extract parts
+    // const idPattern = /([^:]+):volume:hour=(\d+):token=([a-f0-9]+)/;
+    // const matches = substreamMetric.id.match(idPattern);
 
-        // if (!matches) {
-        //   console.error('Invalid ID format');
-        //   return;
-        // }
+    // if (!matches) {
+    //   console.error('Invalid ID format');
+    //   return;
+    // }
 
     // // Assuming the structure of the id is consistent with the given example
     // const [_, protocolName, hour, token] = matches;
@@ -155,34 +155,23 @@ export class SubstreamsService implements OnModuleInit, OnApplicationBootstrap {
     //     value: { assign: substreamMetric.value.toString() },
     //   }
     // });
-    //     const data = JSON.stringify({ substreamMetric })
+    //const data = JSON.stringify({ substreamMetric.fields })
 
-    //     try {
-    //       // const result = await firstValueFrom(this.clientKafka.emit('substreams-topic', {
-    //       const result = await firstValueFrom(this.clientKafka.emit(topic, {
-    //         key: substreamMetric.id,
-    //         value: data,
-    //         headers: {
-    //           'contentType': 'application/json',
-    //           'version': '1'
-    //         },
-    //       }));
-    // try {
-    //   const result = await firstValueFrom(this.clientKafka.emit('pintxo-substreams-topic', {
-    //     key: substreamMetric.id,
-    //     value: data,
-    //     headers: {
-    //       'contentType': 'application/json',
-    //       'version': '1'
-    //     },
-    //   }));
-
-    //   console.log('Message sent successfully', result);
-    //   // TODO Process your logic after successful emission here
-    // } catch (error) {
-    //   console.error('Error sending message', error);
-    //   // TODO Handle emission error here
-    // }
+    try {
+      const result = await firstValueFrom(this.clientKafka.emit(topic, {
+        key: substreamMetric.type,
+        value: substreamMetric.fields,
+        headers: {
+          'contentType': 'application/json',
+          'version': '1'
+        },
+      }));
+      console.log('Message sent successfully', result);
+      // TODO Process your logic after successful emission here
+    } catch (error) {
+      console.error('Error sending message', error);
+      // TODO Handle emission error here
+    }
 
   }
 

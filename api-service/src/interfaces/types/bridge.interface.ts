@@ -1,3 +1,6 @@
+/**
+ * @description Represents the data structure for a single bridge.
+ */
 export interface BridgeData {
     id: number;
     name: string;

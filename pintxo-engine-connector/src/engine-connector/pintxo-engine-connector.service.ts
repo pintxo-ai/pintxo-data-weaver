@@ -46,7 +46,7 @@ export class PintxoEngineConnectorService implements OnModuleInit {
   // }
 
   async uploadData(processedData: Input, topic: string) {
-    console.log(`INJECTING ${topic} data --- ${processedData}`)
+    //console.log(`INJECTING ${topic} data --- ${processedData}`)
 
     //await delay(60000);
     try {

@@ -1,10 +1,12 @@
 import { DataProcessingProcessor } from 'src/interfaces/data-processing-processor.interface.js';
-import { SubstreamMetricProcessor } from './substeam-metric-processor';
-import { PythProcessor } from './pyth-processor';
-import { TokensProcessor } from './tokens-processor';
-import { ProtocolsProcessor } from './protocols-processor';
-import { ChainsProcessor } from './chains-processor';
-import { BridgesProcessor } from './bridges-processor';
+import { PintxoSeaportMetricSubstreamProcessor } from './substream/pintxo-searport-metric-substream-processor';
+import { PythProcessor } from './oracle/pyth-processor';
+import { TokensProcessor } from './api/tokens-processor';
+import { ProtocolsProcessor } from './api/protocols-processor';
+import { ChainsProcessor } from './api/chains-processor';
+import { BridgesProcessor } from './api/bridges-processor';
+import { StablecoinsProcessor } from './api/stablecoins-processor';
+import { ERC20MetricSubstreamProcessor } from './substream/erc20-metric-substream-processor';
 
 /**
  * The ProcessorFactory is a factory-pattern class responsible for 
@@ -12,7 +14,6 @@ import { BridgesProcessor } from './bridges-processor';
  * on a provided Kafka topic.
  */
 export class ProcessorFactory {
-
 
     /**
      * Returns the appropriate DataProcessingProcessor based on the provided topic.
@@ -23,8 +24,10 @@ export class ProcessorFactory {
      */
     static getProcessor(topic: string): DataProcessingProcessor {
         switch (topic) {
-            case "pintxo-substreams-topic":
-                return new SubstreamMetricProcessor();
+            case "pintxo-seaport-substreams-topic":
+                return new PintxoSeaportMetricSubstreamProcessor();
+            case "erc-20-supply-substreams-topic":
+                return new ERC20MetricSubstreamProcessor();
             case "pyth-price-topic":
                 return new PythProcessor();
             case "tokens-api-topic":
@@ -35,6 +38,8 @@ export class ProcessorFactory {
                 return new ChainsProcessor();
             case "bridges-api-topic":
                 return new BridgesProcessor();
+            case "stablecoins-api-topic":
+                return new StablecoinsProcessor();
             default:
                 throw new Error(`Processor for Kafka Topic [${topic}] not found`);
         }
