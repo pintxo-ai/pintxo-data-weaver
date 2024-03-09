@@ -1,0 +1,32 @@
+[
+    { 
+        "endpoint": "https://api.llama.fi/protocols", 
+        "dataType": "protocols", 
+        "responseType": "json" 
+    },
+    {
+        "endpoint": "https://api.llama.fi/v2/chains",
+        "dataType": "chains",
+        "responseType": "json"
+    },
+    { 
+        "endpoint": "https://bridges.llama.fi/bridges?includeChains=true", 
+        "dataType": "bridges", 
+        "responseType": "json" 
+    },
+    { 
+        "endpoint": "https://yields.llama.fi/pools", 
+        "dataType": "pools", 
+        "responseType": "json" 
+    },
+    { 
+        "endpoint": "https://stablecoins.llama.fi/stablecoins?includePrices=true", 
+        "dataType": "stablecoins", 
+        "responseType": "json" 
+    },
+    {
+        "endpoint": "https://api.coingecko.com/api/v3/coins/list",
+        "dataType": "tokens",
+        "responseType": "json"
+    }
+]

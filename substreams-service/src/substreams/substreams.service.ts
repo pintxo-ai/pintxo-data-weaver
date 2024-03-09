@@ -19,12 +19,9 @@ import { StrategyFactory } from './strategy-factory.js';
 import { MessageProcessingStrategy } from './strategies/message-processing-strategy.interface.ts:.js';
 import { PintxoMetric } from 'src/interfaces/pintxo-metric.interface.js';
 
-
-
 @Injectable()
 export class SubstreamsService implements OnModuleInit, OnApplicationBootstrap {
   constructor(@Inject('KAFKA_SUBSTREAMS_SERVICE') private clientKafka: ClientKafka) { }
-  
 
   private coin_map = new Map<string, string>();
   private emitter: BlockEmitter;
@@ -112,36 +109,14 @@ export class SubstreamsService implements OnModuleInit, OnApplicationBootstrap {
 
     this.emitter.on('anyMessage', async (message) => {
       // stategy handles message format and parsing
-      const strategy = StrategyFactory.getStrategy(substreamConfig.strategy); 
+      const strategy = StrategyFactory.getStrategy(substreamConfig.strategy);
       const processedMetrics = strategy.processMessage(message);
-      
+
       // upload each metric
       for (const metric of processedMetrics) {
-        //console.log('NEW METRIC - ', metric)
         await this.upload_metric(metric, substreamName);
       }
-      // let metrics;
-      // if (message.items) { // Assuming this structure for SupplyStrategy
-      //   metrics = message.items.map(item => this.strategy.processMessage(item));
-      // } else if (message.metrics) { // Assuming this structure for other strategies like SeaportStrategy
-      //   metrics = message.metrics.map(metric => this.strategy.processMessage(metric));
-      // }
-
-      // for (const metric of metrics) {
-      //   await this.upload_metric(metric, substreamName);
-      // }
-      // let metricBlock = Metrics.fromJSON(message);
-      // console.log('METRIC BLOCK ', metricBlock)
-      // //for (const index in metricBlock.metrics) {
-      // for (const metric of metricBlock.metrics) {
-      //   let type = substreamConfig.interface
-      //   console.log('INTERFACE TYPE - ', type)
-      //   const substreamMetric: Input<{type}> = this.strategy.processMessage(metricBlock, metric);
-      //   await this.upload_metric(substreamMetric, substreamName);
-      // }
-      //////////////////////////////////////////////////////////
     });
-    
 
     this.emitter.on("close", (error) => error && console.error("Stream Closed:", error));
     this.emitter.on("fatalError", (error) => console.error("Fatal Error:", error));
@@ -149,65 +124,34 @@ export class SubstreamsService implements OnModuleInit, OnApplicationBootstrap {
   }
 
   async upload_metric(substreamMetric: Input<any>, substreamName: string): Promise<void> { //FIX ANY
-    //console.log("***SUBSTREAM METRIC***", substreamMetric);
+    // console.log("***SUBSTREAM METRIC***", substreamMetric);
     const topic = `${substreamName}-substreams-topic`;
-    console.log('TOPIC - ', topic)
 
-    //     console.log("*Temp ID***** 1: ", substreamMetric.id);
-    //     // extract parts
-    //     // const idPattern = /([^:]+):volume:hour=(\d+):token=([a-f0-9]+)/;
-    //     // const matches = substreamMetric.id.match(idPattern);
+    // extract parts
+    // const idPattern = /([^:]+):volume:hour=(\d+):token=([a-f0-9]+)/;
+    // const matches = substreamMetric.id.match(idPattern);
 
-    //     // if (!matches) {
-    //     //   console.error('Invalid ID format');
-    //     //   return;
-    //     // }
-
-    // // Assuming the structure of the id is consistent with the given example
+    // if (!matches) {
+    //   console.error('Invalid ID format');
+    //   return;
+    // }
     // const [_, protocolName, hour, token] = matches;
 
-    //     ////////////////////////// NEEDS TO BE ADAPTED FOR ABSTRACTION OF SUBSTREAM METRIC INPUT FIELDS - TYPE TF OUT
-    // const data = JSON.stringify({
-    //   key: substreamMetric.id,
-    //   fields: {
-    //     protocol_ref: { assign: "id:pintxo:protocol::Opensea Seaport" },  //TO FIX
-    //     token: { assign: substreamMetric.token },
-    //     name: { assign: substreamMetric.name || "Opensea Seaport" }, //TO FIX
-    //     metric: { assign: substreamMetric.name },  //TO FIX
-    //     interval: { assign: substreamMetric.interval },
-    //     interval_value: { assign: substreamMetric.interval_value },
-    //     value: { assign: substreamMetric.value.toString() },
-    //   }
-    // });
-    //     const data = JSON.stringify({ substreamMetric })
-
-    //     try {
-    //       // const result = await firstValueFrom(this.clientKafka.emit('substreams-topic', {
-    //       const result = await firstValueFrom(this.clientKafka.emit(topic, {
-    //         key: substreamMetric.id,
-    //         value: data,
-    //         headers: {
-    //           'contentType': 'application/json',
-    //           'version': '1'
-    //         },
-    //       }));
-    // try {
-    //   const result = await firstValueFrom(this.clientKafka.emit('pintxo-substreams-topic', {
-    //     key: substreamMetric.id,
-    //     value: data,
-    //     headers: {
-    //       'contentType': 'application/json',
-    //       'version': '1'
-    //     },
-    //   }));
-
-    //   console.log('Message sent successfully', result);
-    //   // TODO Process your logic after successful emission here
-    // } catch (error) {
-    //   console.error('Error sending message', error);
-    //   // TODO Handle emission error here
-    // }
-
+    try {
+      const result = await firstValueFrom(this.clientKafka.emit(topic, {
+        key: substreamMetric.type,
+        value: substreamMetric.fields,
+        headers: {
+          'contentType': 'application/json',
+          'version': '1'
+        },
+      }));
+      console.log('Message sent successfully', result);
+      // TODO Process your logic after successful emission here
+    } catch (error) {
+      console.error('Error sending message', error);
+      // TODO Handle emission error here
+    }
   }
 
   private async load_coin_addresses(filePath: string) {

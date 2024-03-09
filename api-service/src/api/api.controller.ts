@@ -1,11 +1,20 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiService } from './api.service';
 
+/**
+ * The ApiController provides an endpoint for manually triggering data fetching and publishing processes.
+ */
 @Controller()
 export class ApiController {
   constructor(private readonly apiService: ApiService) {}
 
-  // test endpoint for manual triggering
+  /**
+   * Endpoint: '/fetch-and-publish'
+   * 
+   * Manually triggers the data fetching and publishing process. [NOT NEEDED]
+   * 
+   * @returns {Object} - Response object indicating success or failure, and optionally an error message.
+   */
   @Get('/fetch-and-publish')
   async fetchAndPublish() {
     try {

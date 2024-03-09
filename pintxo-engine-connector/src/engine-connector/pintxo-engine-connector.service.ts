@@ -30,9 +30,7 @@ export class PintxoEngineConnectorService implements OnModuleInit {
   }
 
   async processData(topic: string, message: any) {
-
     this.processor = ProcessorFactory.getProcessor(topic);
-    //console.log('PROCESSOR - ', this.processor)
     const processedData: Input = this.processor.processData(message)
 
     // log to text file
@@ -50,13 +48,12 @@ export class PintxoEngineConnectorService implements OnModuleInit {
   async uploadData(processedData: Input, topic: string) {
     //console.log(`INJECTING ${topic} data --- ${processedData}`)
 
-    //await delay(1000);
+    //await delay(60000);
     try {
       await axios.put(processedData.reqUrl, { fields: processedData.fields }, { headers: { 'Content-Type': 'application/json' } });
-      //console.log(`${topic} data uploaded successfully`);
+      console.log(`${topic} data uploaded successfully`);
     } catch (error) {
-      //console.error(`Failed to upload:`, error);
-      //console.error(`Ferror`);
+      console.error(`Failed to upload:`, error);
     }
   }
 
@@ -74,7 +71,6 @@ export class PintxoEngineConnectorService implements OnModuleInit {
       console.log(`${topic} data uploaded successfully`);
     } catch (error) {
       console.error(`Failed to upload:`, error);
-      //console.error(`Ferror`);
     }
   }
 }

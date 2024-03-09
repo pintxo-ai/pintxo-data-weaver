@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { PythService } from './pyth.service';
 
-/// PURPOSE - Defines the PythModule, which acts as a container for the Pyth-related functionality.
-
 // Key Components:
 //  imports:
 //    ClientsModule.register(...): Sets up a Kafka microservice client configuration with the following:
@@ -17,6 +15,10 @@ import { PythService } from './pyth.service';
 //  exports:
 //    PythService: Exports the PythService to make it accessible to other modules that import the PythModule
 
+/**
+ * @description The PythModule encapsulates the core components responsible for 
+ *              interacting with the Pyth network and handling price updates.
+ */
 @Module({
   imports: [
     ClientsModule.register([

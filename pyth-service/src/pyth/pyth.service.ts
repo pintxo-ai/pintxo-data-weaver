@@ -8,19 +8,11 @@ import {
   PythCluster
 } from '@pythnetwork/client';
 
-///PURPOSE - Core service class to interface with the Pyth network for price updates.
-
-//  Decorators:
-//    @Injectable(): Signifies this is a service available for dependency injection.
-
-//  Lifecycle Hook:
-//    onModuleInit(): Executes at module initialization to start the Pyth connection.
-
-//  Functions:
-//    initializePythConnection(): Sets up the Pyth connection.
-//    handlePriceChange(): Processes price change events from Pyth
-//    publishToKafka(): Emits updates to Kafka 'Pyth' topic.
-
+/**
+ * @description The PythService is the central component responsible for managing the
+ *              connection to the Pyth network, receiving price updates, and
+ *              publishing those updates to a Kafka topic.
+ */
 @Injectable()
 export class PythService implements OnModuleInit {
   private pythConnection: PythConnection;
@@ -28,6 +20,10 @@ export class PythService implements OnModuleInit {
 
   constructor(@Inject('KAFKA_PYTH_SERVICE') private clientKafka: ClientKafka) { }
 
+  /**
+   * @description Lifecycle hook executed during module initialization. Initializes the
+   *              connection to the Pyth network.
+   */
   async onModuleInit() {
     console.log(`
                                         
@@ -41,6 +37,10 @@ _/            _/          _/      _/    _/
     this.initializePythConnection();
   }
 
+  /**
+   * @description Establishes the connection to the Pyth network and
+   *              sets up event listeners for price changes. 
+   */
   private initializePythConnection() {
     const PYTHNET_CLUSTER_NAME: PythCluster = 'pythnet';
     const connection = new Connection(getPythClusterApiUrl(PYTHNET_CLUSTER_NAME));
@@ -56,6 +56,12 @@ _/            _/          _/      _/    _/
     this.pythConnection.start();
   }
 
+  /**
+   * @description  Handles price change events from Pyth, storing the latest prices
+   *               and broadcasting updates over Kafka.
+   * @param {object} productAccount Pyth product account data.
+   * @param {object} priceAccount Pyth price account data.
+   */
   private handlePriceChange(productAccount, priceAccount) {
     const product = productAccount.accountInfo.data.product;
     const price = priceAccount.accountInfo.data;
@@ -68,6 +74,11 @@ _/            _/          _/      _/    _/
     }
   }
 
+  /**
+   * @description Publishes a price update to the Kafka 'pyth-price-topic'.
+   * @param {string} symbol The symbol (e.g., BTC, SOL).
+   * @param {number} price The updated price.
+   */
   private publishToKafka(symbol: string, price: number) {
     this.clientKafka.emit('pyth-price-topic', { symbol, price });
   }
