@@ -1,11 +1,13 @@
 # Pintxo-Data-Weaver
 Pintxo Data Weaver <strike>```will be```</strike>is a cutting-edge distributed middleware designed to orchestrate the seamless flow of data from sources (Substreams, Pyth, dedicated API's, etc) to our sink, Pintxo's Engine (a Vespa Vector DB). 
 
-In its current state, the system is composed of four microservices:
+In its current state, the system is composed of four microservices (out of 7 containers):
 * The Substreams Service 
 * The Pyth Service
 * The API Service
 * The Engine Connector Service
+
+Use Kafdrop to view topic channels.
 
 ## Setup + Running
 ---

@@ -2,14 +2,15 @@ export interface CirculatingData {
     [key: string]: number;
 }
 
-// interface ChainData {
-//     current: { [key: string]: CirculatingData }; // Use a map for dynamic chain names with their circulating data
-// }
+export interface ChainCirculatingDetails {
+    current: CirculatingData;
+    circulatingPrevDay: CirculatingData;
+    circulatingPrevWeek: CirculatingData;
+    circulatingPrevMonth: CirculatingData;
+}
 
 export interface ChainCirculatingData {
-    [chainName: string]: {
-      current: CirculatingData;
-    };
+    [chainName: string]: ChainCirculatingDetails;
 }
 
 /**

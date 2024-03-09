@@ -28,7 +28,7 @@ export class ProtocolsProcessor implements DataProcessingProcessor {
             },
             type: "protocols",
         };
-        //console.log('BASED protocols - ', request)
+
         return request
     };
 }

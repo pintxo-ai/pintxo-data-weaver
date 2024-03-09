@@ -1,5 +1,5 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { Cron, CronExpression, SchedulerRegistry } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { ClientKafka } from '@nestjs/microservices';
 import * as fs from 'fs';
 import { DataHandlerFactory } from '../handlers/data-handler-factory';
@@ -9,6 +9,7 @@ import { ProtocolHandler } from '../handlers/protocol-handler';
 import { ChainHandler } from '../handlers/chain-handler';
 import { BridgeHandler } from '../handlers/bridge-handler';
 import { StablecoinHandler } from '../handlers/stablecoin-handler';
+import { PoolHandler } from 'src/handlers/pool-handler';
 
 /**
  * @description The ApiService is responsible for managing the fetching, processing, and 
@@ -26,7 +27,6 @@ export class ApiService implements OnModuleInit {
   constructor(
     @Inject('KAFKA_API_SERVICE') private clientKafka: ClientKafka,
     private dataHandlerFactory: DataHandlerFactory
-    //private schedulerRegistry: SchedulerRegistry
   ) { }
 
   /**
@@ -52,10 +52,6 @@ export class ApiService implements OnModuleInit {
      '----------------'  '----------------'  '----------------' 
                                                                                                                                               
   `);
-    // this.endpointsConfig = JSON.parse(fs.readFileSync('endpoints.json', 'utf8'));
-    // this.endpointsConfig.forEach((config) => {
-    //   this.scheduleJob(config);
-    // });
     this.endpoints = await this.loadEndpointsConfig();
     this.initializeHandlers();
     /////this.handleCron(); // fetch off the bat
@@ -78,13 +74,14 @@ export class ApiService implements OnModuleInit {
     this.dataHandlerFactory.registerHandler('chains', new ChainHandler());
     this.dataHandlerFactory.registerHandler('bridges', new BridgeHandler());
     this.dataHandlerFactory.registerHandler('stablecoins', new StablecoinHandler());
+    this.dataHandlerFactory.registerHandler('pools', new PoolHandler());
   }
 
   /**
    * @description Cron job executing every 10 minutes
    *              Fetches and processes data for each configured endpoint.
    */
-  @Cron(CronExpression.EVERY_10_MINUTES) // @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT) EVERY_30_SECONDS
+  @Cron(CronExpression.EVERY_5_MINUTES) // @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT) EVERY_30_SECONDS
   async handleCron() {
     for (const endpointConfig of this.endpoints) {
       //console.log('CONFIG - ', endpointConfig)
@@ -123,16 +120,5 @@ export class ApiService implements OnModuleInit {
     this.clientKafka.emit(topic, data);
   }
 
-  // scheduleJob(config: any) {
-  //   const job = new CronJob(CronExpression.EVERY_DAY_AT_MIDNIGHT, async () => {
-  //     const data = await this.fetchDataFromEndpoint(config.endpoint);
-  //     const handler = DataHandlerFactory.getHandler(config.dataType);
-  //     const processedData = handler.handleData(data);
-  //     this.publishToKafka(processedData);
-  //   });
-
-  //   this.schedulerRegistry.addCronJob(`${config.endpoint}-job`, job);
-  //   job.start();
-  // }
 }
 

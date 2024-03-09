@@ -4,7 +4,6 @@ import { SupplyMetric } from 'src/interfaces/supply-metric.interface.js';
 
 export class SupplyStrategy implements MessageProcessingStrategy<SupplyMetric> {
   processMessage(message: any): Input<SupplyMetric>[] {
-    console.log('SUPPLIED')
 
     // check for supply structure
     if (!message?.items || !Array.isArray(message.items)) {

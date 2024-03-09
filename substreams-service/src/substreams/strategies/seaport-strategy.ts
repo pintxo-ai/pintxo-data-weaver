@@ -29,7 +29,6 @@ export class SeaportStrategy implements MessageProcessingStrategy<PintxoMetric> 
   }
 
   processMessage(message: any): Input<PintxoMetric>[] {
-    console.log('SEA PORT - SUPPLIED ');
 
     // check structure
     if (!message?.metrics || !Array.isArray(message.metrics)) {

@@ -114,7 +114,6 @@ export class SubstreamsService implements OnModuleInit, OnApplicationBootstrap {
 
       // upload each metric
       for (const metric of processedMetrics) {
-        //console.log('NEW METRIC - ', metric)
         await this.upload_metric(metric, substreamName);
       }
     });
@@ -125,11 +124,9 @@ export class SubstreamsService implements OnModuleInit, OnApplicationBootstrap {
   }
 
   async upload_metric(substreamMetric: Input<any>, substreamName: string): Promise<void> { //FIX ANY
-    console.log("***SUBSTREAM METRIC***", substreamMetric);
+    // console.log("***SUBSTREAM METRIC***", substreamMetric);
     const topic = `${substreamName}-substreams-topic`;
-    //console.log('TOPIC - ', topic)
 
-    //console.log("*Temp ID***** 1: ", substreamMetric.id);
     // extract parts
     // const idPattern = /([^:]+):volume:hour=(\d+):token=([a-f0-9]+)/;
     // const matches = substreamMetric.id.match(idPattern);
@@ -138,24 +135,7 @@ export class SubstreamsService implements OnModuleInit, OnApplicationBootstrap {
     //   console.error('Invalid ID format');
     //   return;
     // }
-
-    // // Assuming the structure of the id is consistent with the given example
     // const [_, protocolName, hour, token] = matches;
-
-    //     ////////////////////////// NEEDS TO BE ADAPTED FOR ABSTRACTION OF SUBSTREAM METRIC INPUT FIELDS - TYPE TF OUT
-    // const data = JSON.stringify({
-    //   key: substreamMetric.id,
-    //   fields: {
-    //     protocol_ref: { assign: "id:pintxo:protocol::Opensea Seaport" },  //TO FIX
-    //     token: { assign: substreamMetric.token },
-    //     name: { assign: substreamMetric.name || "Opensea Seaport" }, //TO FIX
-    //     metric: { assign: substreamMetric.name },  //TO FIX
-    //     interval: { assign: substreamMetric.interval },
-    //     interval_value: { assign: substreamMetric.interval_value },
-    //     value: { assign: substreamMetric.value.toString() },
-    //   }
-    // });
-    //const data = JSON.stringify({ substreamMetric.fields })
 
     try {
       const result = await firstValueFrom(this.clientKafka.emit(topic, {
@@ -172,7 +152,6 @@ export class SubstreamsService implements OnModuleInit, OnApplicationBootstrap {
       console.error('Error sending message', error);
       // TODO Handle emission error here
     }
-
   }
 
   private async load_coin_addresses(filePath: string) {

@@ -91,4 +91,13 @@ export class PintxoEngineConnectorController {
       await this.pintxoEngineService.processData('stablecoins-api-topic', message);
     }
   }
+
+  @EventPattern('pools-api-topic')
+  async handlePoolData(@Payload() message: any) {
+    console.log("Weaving Data from pools-api-topic...")
+
+    if (message) {
+      await this.pintxoEngineService.processData('pools-api-topic', message);
+    }
+  }
 }

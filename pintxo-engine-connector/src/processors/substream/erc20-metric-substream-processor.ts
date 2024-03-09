@@ -4,6 +4,7 @@ import { Input } from "src/interfaces/input.interface";
 export class ERC20MetricSubstreamProcessor implements DataProcessingProcessor {
   processData(message: any): Input {
     const requestUrl = `http://vespa:8080/document/v1/pintxo/erc20_supply/docid/${message.address}?create=true`;
+    
     const request: Input = {
       reqUrl: requestUrl,
       fields: {

@@ -3,8 +3,8 @@ import { Input } from "src/interfaces/input.interface";
 
 export class TokensProcessor implements DataProcessingProcessor {
   processData(message: any): Input {
-    //console.log('BASED tokens - ', message)
     const requestUrl = `http://vespa:8080/document/v1/pintxo/tokens/docid/${message.id}?create=true`;
+
     const request: Input = {
         reqUrl: requestUrl,
         fields: {
@@ -14,6 +14,7 @@ export class TokensProcessor implements DataProcessingProcessor {
         },
         type: "tokens", 
     };
+    
     return request
   };
 }

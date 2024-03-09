@@ -4,6 +4,7 @@ import { Input } from "src/interfaces/input.interface";
 export class PintxoSeaportMetricSubstreamProcessor implements DataProcessingProcessor {
   processData(message: any): Input {
     const requestUrl = `http://vespa:8080/document/v1/pintxo/metric/docid/${message.id}?create=true`;
+
     const request: Input = {
       reqUrl: requestUrl,
       fields: {
@@ -17,6 +18,7 @@ export class PintxoSeaportMetricSubstreamProcessor implements DataProcessingProc
       },
       type: "pintxo-seaport-substreams-topic",
     };
+    
     return request
   };
 }

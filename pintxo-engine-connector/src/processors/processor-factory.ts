@@ -7,6 +7,7 @@ import { ChainsProcessor } from './api/chains-processor';
 import { BridgesProcessor } from './api/bridges-processor';
 import { StablecoinsProcessor } from './api/stablecoins-processor';
 import { ERC20MetricSubstreamProcessor } from './substream/erc20-metric-substream-processor';
+import { PoolsProcessor } from './api/pool-processor';
 
 /**
  * The ProcessorFactory is a factory-pattern class responsible for 
@@ -40,6 +41,8 @@ export class ProcessorFactory {
                 return new BridgesProcessor();
             case "stablecoins-api-topic":
                 return new StablecoinsProcessor();
+            case "pools-api-topic":
+                return new PoolsProcessor();
             default:
                 throw new Error(`Processor for Kafka Topic [${topic}] not found`);
         }
