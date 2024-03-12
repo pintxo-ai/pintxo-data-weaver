@@ -1,4 +1,4 @@
 export interface Input<T> extends Iterable<T>{
-    fields: T; //{ [key: string]: { assign: any }; };
+    fields: T;
     type: string;
 }

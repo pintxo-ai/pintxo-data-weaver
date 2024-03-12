@@ -8,7 +8,7 @@ export class PintxoSeaportMetricSubstreamProcessor implements DataProcessingProc
     const request: Input = {
       reqUrl: requestUrl,
       fields: {
-        protocol_ref: { assign: "id:pintxo:protocol::Opensea_Seaport" },  //TO FIX
+        protocol_ref: { assign: "id:pintxo:protocol::Opensea_Seaport" }, 
         token: { assign: message.token },
         name: { assign: message.name || "Opensea Seaport" }, //TO FIX
         metric: { assign: message.name },  //TO FIX
