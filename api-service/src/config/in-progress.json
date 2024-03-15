@@ -13,5 +13,10 @@
         "endpoint": "https://api.llama.fi/overview/fees?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true&dataType=dailyRevenue", 
         "dataType": "daily_revenue", 
         "responseType": "json" 
+    },
+    { 
+        "endpoint": "https://api.geckoterminal.com/api/v2/networks/zksync/new_pools?include=base_token%2C%20quote_token%2C%20dex", 
+        "dataType": "new_pools_zksync", 
+        "responseType": "json" 
     }
 ]
