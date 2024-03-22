@@ -81,7 +81,7 @@ export class ApiService implements OnModuleInit {
    * @description Cron job executing every 10 minutes
    *              Fetches and processes data for each configured endpoint.
    */
-  @Cron(CronExpression.EVERY_5_MINUTES) // @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT) EVERY_30_SECONDS
+  @Cron(CronExpression.EVERY_30_MINUTES) // @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT) EVERY_30_SECONDS
   async handleCron() {
     for (const endpointConfig of this.endpoints) {
       //console.log('CONFIG - ', endpointConfig)
