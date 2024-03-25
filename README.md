@@ -8,6 +8,10 @@ In its current state, the system is composed of four microservices (out of 7 con
 * The API Service
 * The Engine Connector Service
 
+TODO:
+* Add more data sources (substreams + endpoints)
+* Enhance Kafka 
+
 Use Kafdrop to view topic channels.
 
 ## Setup + Running
@@ -181,6 +185,8 @@ export class <X>Processor implements DataProcessingProcessor {
 * Where ```<Y>``` is Vespa schema / data type name.
 * Where ```<Z>``` is the ID used for each vespa document injection. I.e `message.name` or `mesage.id`.
 * Where ```<A>, <B>,``` and ```<C>``` are the fields in the message to be injected into the respective vespa schema. Example format ```name: { assign: message.name },```
+
+* ALL GOOD TO GO
 
 ## Architecture
 ---
