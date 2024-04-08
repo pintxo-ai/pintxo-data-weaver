@@ -22,9 +22,6 @@ import { DataHandlerFactory } from '../handlers/data-handler-factory';
             clientId: 'api-service', // Unique ID for this microservice client 
             brokers: ['kafka:9092'], // Kafka broker address(es)
           },
-          consumer: {
-            groupId: 'pintxo-microservices', // Consumer group for coordination
-          },
           producer: {
             allowAutoTopicCreation: true,
           },

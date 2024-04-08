@@ -1,12 +1,9 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import axios from 'axios';
-// import * as fs from 'fs';
-import { promises as fs } from 'fs';
 import * as path from 'path';
 import { DataProcessingProcessor } from 'src/interfaces/data-processing-processor.interface';
 import { Input } from 'src/interfaces/input.interface';
 import { ProcessorFactory } from 'src/processors/processor-factory';
-//import { DataProcessingStrategyFactory } from 'src/processors/processor-strategy-factory';
 
 function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -14,8 +11,6 @@ function delay(ms) {
 
 @Injectable()
 export class PintxoEngineConnectorService implements OnModuleInit {
-  //constructor(private strategyFactory: DataProcessingStrategyFactory) { }
-
   private processor: DataProcessingProcessor;
 
   async onModuleInit() {
@@ -47,7 +42,6 @@ export class PintxoEngineConnectorService implements OnModuleInit {
 
   async uploadData(processedData: Input, topic: string) {
     //console.log(`INJECTING ${topic} data --- ${processedData}`)
-
     //await delay(60000);
     try {
       await axios.put(processedData.reqUrl, { fields: processedData.fields }, { headers: { 'Content-Type': 'application/json' } });

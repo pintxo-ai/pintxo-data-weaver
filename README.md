@@ -8,6 +8,10 @@ In its current state, the system is composed of four microservices (out of 7 con
 * The API Service
 * The Engine Connector Service
 
+TODO:
+* Add more data sources (substreams + endpoints)
+* Enhance Kafka 
+
 Use Kafdrop to view topic channels.
 
 ## Setup + Running
@@ -46,11 +50,11 @@ There are three steps involved in adding a substream:
 }
 ```
 Where every JSON substream entry has the fields:
-```name``` - Defines the Substream Name 
-```manifestUrl``` - Defines the high-level outline for a Substreams module. The manifest file is used for defining properties specific to the Substreams module and identifying the dependencies between the inputs and outputs of modules.
-```strategy``` - Defines the substream block processesing strategy that will be used to extract and format the information we desire. (Arbitrary name used in the next step.)
-```outputModule``` - Defines the substream module to track within the manifestUrl for events.
-```interface``` - Defines the interface type/structure that will be used for the substream when processing.
+* ```name``` - Defines the Substream Name 
+* ```manifestUrl``` - Defines the high-level outline for a Substreams module. The manifest file is used for defining properties specific to the Substreams module and identifying the dependencies between the inputs and outputs of modules.
+* ```strategy``` - Defines the substream block processesing strategy that will be used to extract and format the information we desire. (Arbitrary name used in the next step.)
+* ```outputModule``` - Defines the substream module to track within the manifestUrl for events.
+* ```interface``` - Defines the interface type/structure that will be used for the substream when processing.
 
 This is the first step in adding new substreams to the substreams service.
 
@@ -64,7 +68,7 @@ export interface Input<T> extends Iterable<T>{
 }
 ```
 
-3. Now leaving the substreams microservice, we must define a handler + some logic in the engine-connector service. View SUBSTREAM-CONNECTION step below.
+3. Now leaving the substreams microservice, we must define a handler + some logic in the engine-connector service. View steps below.
 
 ### Realtime Service
 Not much done here for architecture abstraction. Only have Pyth hooked up right now, but vision is this would just handle all real-time transport requests.
@@ -90,9 +94,9 @@ There are 3/4 steps involved in adding a new data source endpoint.
 ]
 ```
 Where each JSON endpoint entry has the fields:
-```endpoint``` - Defines thes the api endpoint URL.
-```dataType``` - Defines the corresponding Kafka topic name as well as pre-processor handler.
-```responseType``` - Not used right now but useful for defining interfaces.
+* ```endpoint``` - Defines thes the api endpoint URL.
+* ```dataType``` - Defines the corresponding Kafka topic name as well as pre-processor handler.
+* ```responseType``` - Not used right now but useful for defining interfaces.
 
 2. Now within ```src/handlers/```, define a new handler for the endpoint. The general structure for a handler follows:
 ```
@@ -116,17 +120,73 @@ where X corresponds to the endpoints response data type.
 
 3. Once pre-processing handler logic is defined, in ```src/api/api.service.ts```, first import the handler, then within the ```initializeHandlers()``` function, register the handler along with the respective dataType (the one used in the config).
 
-4. Leaving the API service, we must define a handler + some logic in the engine-connector service. View step API-CONNECTION step below.
+4. Leaving the API service, we must define a handler + some logic in the engine-connector service. View steps below.
 
 ### Engine Connector Service
 The engine connector is a kafka consumer and orchestrates all topic message consumption, as well as the respective handling + injection into the Pintxo Engine (Vespa DB).
 
-1. 
+1. To begin, an EventPattern endpoint must be defined to receive the kafka channel topics. Within ```src/engine-connector/pintxo-engine-connector.controller.ts```, define the receiver function under the respective service type with generic syntax:
+```
+@EventPattern('<X>-topic')
+  async handle<X>Data(@Payload() message: any) {
+    console.log("Weaving Data from <X>-topic...")
 
-- SUBSTREAM-CONNECTION
+    if (message) {
+      await this.pintxoEngineService.processData('<X>-topic', message);
+    }
+  }
+```
+* Where ```<X>``` is the Kafka topic name.
 
-- API-CONNECTION
+2. Next, within ```src/processors/processor-factory.ts```, define a new switch case for the new data topic, as well as pre-emptively define the processor class, and its import. Ex:
+```
+import { <X>Processor } from './<Y>/<X>-processor';
 
+export class ProcessorFactory {
+  ...
+  static getProcessor(topic: string): DataProcessingProcessor {
+      switch (topic) {
+          case "pintxo-seaport-substreams-topic":
+              return new PintxoSeaportMetricSubstreamProcessor();
+          case "<X>-topic":
+              return new <X>Processor();
+          ...
+          default:
+              throw new Error(`Processor for Kafka Topic [${topic}] not found`);
+      }
+  }
+}
+```
+* Where ```<X>``` is the Kafka topic name and ```<Y>``` is the data's source service.
+
+3. Respective to each service, implement the processor which will have a generic structure as follows:
+```
+import { DataProcessingProcessor } from "src/interfaces/data-processing-processor.interface"
+import { Input } from "src/interfaces/input.interface";
+
+export class <X>Processor implements DataProcessingProcessor {
+    processData(message: any): Input {
+        const requestUrl = `http://vespa:8080/document/v1/pintxo/<Y>/docid/${<Z>}?create=true`;
+        const request: Input = {
+            reqUrl: requestUrl,
+            fields: {
+                <A>,
+                <B>,
+                <C>,
+                ...
+            },
+            type: "<Y>",
+        };
+        return request
+    };
+}
+```
+* Where ```<X>``` is the data type.
+* Where ```<Y>``` is Vespa schema / data type name.
+* Where ```<Z>``` is the ID used for each vespa document injection. I.e `message.name` or `mesage.id`.
+* Where ```<A>, <B>,``` and ```<C>``` are the fields in the message to be injected into the respective vespa schema. Example format ```name: { assign: message.name },```
+
+* ALL GOOD TO GO
 
 ## Architecture
 ---

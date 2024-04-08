@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { PythModule } from './pyth/pyth.module';
+import { AppModule } from './app.module';
 
 /// PURPOSE - This is the entry point of the Pyth NestJS microservice. 
 
@@ -10,7 +10,7 @@ import { PythModule } from './pyth/pyth.module';
  *    Starting the application to listen on port 4001 (await app.listen(4001))
  */
 async function bootstrap() {
-  const app = await NestFactory.create(PythModule);
+  const app = await NestFactory.create(AppModule);
   await app.listen(4001);
 }
 bootstrap();
