@@ -8,9 +8,13 @@ In its current state, the system is composed of four microservices (out of 7 con
 * The API Service
 * The Engine Connector Service
 
-TODO:
-* Add more data sources (substreams + endpoints)
-* Enhance Kafka 
+## TODO:
+* Enhance/Expand on Kafka + DS Architecture
+* More Data sources - substreams, api endpoints
+* 'TYPE' tf out of everything. All must have an interface, no ": any"
+* Do Stress and Load Testing + other monitoring leveraging Prometheus, Grafana, and Jaeger
+* CI/CD
+* Optimize codebase
 
 Use Kafdrop to view topic channels.
 
