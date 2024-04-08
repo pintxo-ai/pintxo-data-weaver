@@ -71,17 +71,17 @@ services:
     networks:
       - pintxo-network
 
-  pyth-service:
-    build: ./pyth-service
-    depends_on:
-      - vespa
-      - kafka
-    environment:
-      KAFKA_BROKER: kafka:9092
-    ports:
-      - "4001:4001"
-    networks:
-      - pintxo-network
+  # pyth-service:
+  #   build: ./pyth-service
+  #   depends_on:
+  #     - vespa
+  #     - kafka
+  #   environment:
+  #     KAFKA_BROKER: kafka:9092
+  #   ports:
+  #     - "4001:4001"
+  #   networks:
+  #     - pintxo-network
 
   api-service:
     build: ./api-service

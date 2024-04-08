@@ -14,14 +14,11 @@ import { SubstreamsService } from './substreams.service.js';
             clientId: 'substreams-service',
             brokers: ['kafka:9092'],
           },
-          consumer: {
-            groupId: 'pintxo-microservices', // is this wrong?? should be producer but why does it work?
-          },
         },
       },
     ]),
   ],
-  controllers: [SubstreamsController], //needed ?
+  controllers: [SubstreamsController],
   providers: [SubstreamsService],
 })
 export class SubstreamsModule {}

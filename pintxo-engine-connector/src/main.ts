@@ -14,7 +14,7 @@ async function bootstrap() {
           brokers: ['kafka:9092'],
         },
         consumer: {
-          groupId: 'pintxo-engine-consumer',
+          groupId: 'pintxo-engine-consumer', // Consumer options docs https://kafka.js.org/docs/consuming#a-name-options-a-options
         },
       },
     },

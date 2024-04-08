@@ -4,7 +4,7 @@ import { trimPrefix } from '../../util/string-utils.js';
 
 export class BaseStrategy implements MessageProcessingStrategy<any> {
   processMessage(messageBlock: any): Input<any>[] {
-    console.log('BASED')
+    // todo implement base strategy if we have one
     return messageBlock
   };
 }
